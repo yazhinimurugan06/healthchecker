@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Healthcare Sensor Page</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Healthcare Sensor Input</h1>
+        
+        <form id="sensorForm">
+            <label for="heartRate">Heart Rate (bpm):</label>
+            <input type="number" id="heartRate" required>
+
+            <label for="temperature">Temperature (°C):</label>
+            <input type="number" id="temperature" step="0.1" required>
+
+            <label for="bloodPressure">Blood Pressure (mmHg):</label>
+            <input type="text" id="bloodPressure" placeholder="e.g., 120/80" required>
+
+            <label for="waterLevel">Water Level (liters):</label>
+            <input type="number" id="waterLevel" step="0.1" required>
+
+            <label for="respiratoryRate">Respiratory Rate (breaths/min):</label>
+            <input type="number" id="respiratoryRate" required>
+
+            <label for="spo2Level">SpO2 Level (%):</label>
+            <input type="number" id="spo2Level" required>
+
+            <label for="cholesterol">Cholesterol (mg/dL):</label>
+            <input type="number" id="cholesterol" required>
+<br><br>
+            <button type="submit">Detect Health Status</button>
+        </form>
+
+        <div id="feedback" class="feedback"></div>
+        <button id="generateCertificate" style="display: none;">Generate Certificate</button>
+    </div>
+
+    <script>
+        document.getElementById('sensorForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            // Get input values
+            const heartRate = parseInt(document.getElementById('heartRate').value);
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            const bloodPressure = document.getElementById('bloodPressure').value;
+            const waterLevel = parseFloat(document.getElementById('waterLevel').value);
+            const respiratoryRate = parseInt(document.getElementById('respiratoryRate').value);
+            const spo2Level = parseInt(document.getElementById('spo2Level').value);
+            const cholesterol = parseInt(document.getElementById('cholesterol').value);
+            
+            // Save inputs to localStorage
+            localStorage.setItem('heartRate', heartRate);
+            localStorage.setItem('temperature', temperature);
+            localStorage.setItem('bloodPressure', bloodPressure);
+            localStorage.setItem('waterLevel', waterLevel);
+            localStorage.setItem('respiratoryRate', respiratoryRate);
+            localStorage.setItem('spo2Level', spo2Level);
+            localStorage.setItem('cholesterol', cholesterol);
+            
+            // Feedback generation logic
+            let feedback = 'Health Assessment Results:<br>';
+            let isHealthy = true;
+
+            // Heart Rate Check
+            if (heartRate < 60 || heartRate > 100) {
+                feedback += 'Heart Rate is abnormal. Normal range is 60-100 bpm.<br>';
+                isHealthy = false;
+            } else {
+                feedback += 'Heart Rate is normal.<br>';
+            }
+
+            // Temperature Check
+            if (temperature < 36 || temperature > 37.5) {
+                feedback += 'Temperature is abnormal. Normal range is 36°C - 37.5°C.<br>';
+                isHealthy = false;
+            } else {
+                feedback += 'Temperature is normal.<br>';
+            }
+
+            // Blood Pressure Check
+            const bpValues = bloodPressure.split('/');
+            const systolic = parseInt(bpValues[0]);
+            const diastolic = parseInt(bpValues[1]);
+            if ((systolic < 90 || systolic > 120) || (diastolic < 60 || diastolic > 80)) {
+                feedback += 'Blood Pressure is abnormal. Normal range is 120/80 mmHg.<br>';
+                isHealthy = false;
+            } else {
+                feedback += 'Blood Pressure is normal.<br>';
+            }
+
+            // Water Level Check
+            if (waterLevel < 2 || waterLevel > 4) {
+                feedback += 'Water Level is abnormal. Recommended intake is 2-4 liters.<br>';
+                isHealthy = false;
+            } else {
+                feedback += 'Water Level is adequate.<br>';
+            }
+
+            // Respiratory Rate Check
+            if (respiratoryRate < 12 || respiratoryRate > 20) {
+                feedback += 'Respiratory Rate is abnormal. Normal range is 12-20 breaths/min.<br>';
+                isHealthy = false;
+            } else {
+                feedback += 'Respiratory Rate is normal.<br>';
+            }
+
+            // SpO2 Level Check
+            if (spo2Level < 90) {
+                feedback += 'SpO2 Level is low. Should be above 90%.<br>';
+                isHealthy = false;
+            } else {
+                feedback += 'SpO2 Level is normal.<br>';
+            }
+
+            // Cholesterol Check
+            if (cholesterol > 200) {
+                feedback += 'Cholesterol is high. Should be less than 200 mg/dL.<br>';
+                isHealthy = false;
+            } else {
+                feedback += 'Cholesterol is normal.<br>';
+            }
+
+            // Overall Feedback
+            if (isHealthy) {
+                feedback += '<strong>All readings are normal. Keep up the good health!</strong>';
+            } else {
+                feedback += '<strong>Please consult a healthcare professional for abnormal readings.</strong>';
+            }
+
+            // Display feedback
+            document.getElementById('feedback').innerHTML = feedback;
+
+            // Show Generate Certificate button
+            document.getElementById('generateCertificate').style.display = 'block';
+        });
+
+        // Generate Certificate
+        document.getElementById('generateCertificate').addEventListener('click', function() {
+            window.location.href = 'certificate.html'; // Redirect to the certificate page
+        });
+    </script>
+</body>
+</html>
